@@ -199,7 +199,9 @@ def get_low_stock_parts(current_mechanic_id):
 @inventory_bp.route("/<int:id>", methods = ['PUT'])
 @mechanic_token_required
 def update_part(current_mechanic_id, id):
-    part = Inventory.query.get_or_404(id)
+    part = Inventory.query.get(id)
+    if part is None:
+        return jsonify({'error': 'Part not found.'}), 404
     data = request.get_json()
     
     if not data:
@@ -229,7 +231,9 @@ def update_part(current_mechanic_id, id):
 @inventory_bp.route("/<int:id>", methods = ['DELETE'])
 @mechanic_token_required
 def delete_part(current_mechanic_id, id):
-    part = Inventory.query.get_or_404(id)
+    part = Inventory.query.get(id)
+    if part is None:
+        return jsonify({'error': 'Part not found.'}), 404
     
     try:
         part_name = part.name

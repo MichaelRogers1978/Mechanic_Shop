@@ -4,8 +4,6 @@ from functools import wraps
 from datetime import datetime, timedelta
 import os
 import traceback
-from flask import current_app
-from jose import jwt
 
 def get_secret_key():
     FIXED_SECRET_KEY = "mechanic-shop-development-secret-key-2025-very-long-and-secure-fixed"
@@ -299,8 +297,7 @@ def decode_admin_token(token):
         print(f"decode_admin_token error: {e}")
         return None
     
-from flask import current_app
-from jose import jwt
+
 def decode_mechanic_token(token):
     secret_key = current_app.config.get('SECRET_KEY')
     try:

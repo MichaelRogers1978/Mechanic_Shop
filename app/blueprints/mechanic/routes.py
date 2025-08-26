@@ -46,10 +46,12 @@ def create_mechanic():
         
         new_mechanic = Mechanic(
             name = data['name'].strip(),
+            username = data['username'],
             email = data['email'].lower().strip(),
             phone = str(data['phone']),
             address = data.get('address', '').strip(),
-            hours_worked = data.get('hours_worked', 0)
+            hours_worked = data.get('hours_worked', 0),
+            specialty = data.get('specialty', '').strip()
         )
         
         if 'password' in data and data['password']:

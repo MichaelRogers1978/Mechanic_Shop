@@ -1,0 +1,1032 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Mechanic Shop",
+    "version": "1.0.0",
+    "description": "API for managing mechanics, customers, service tickets and inventory."
+  },
+  "basePath": "/",
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. Example: 'Authorization: Bearer {token}'"
+    }
+  },
+  "tags": [
+    { "name": "Mechanics", "description": "Endpoints for managing all mechanic-related operations." },
+    { "name": "Auth", "description": "Authentication routes for Admins and Mechanics." },
+    { "name": "Customers", "description": "Endpoints for managing all customer-related operations." }
+  ],
+  "paths": {
+    "/mechanics/admin/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Admin Login",
+        "description": "Logs in admin and returns an authorization token.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/AdminLoginPayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful login", "schema": { "$ref": "#/definitions/LoginResponse" } },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/mechanics/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Mechanic Login",
+        "description": "Logs in a mechanic and returns an authorization token.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/MechanicLoginPayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful login", "schema": { "$ref": "#/definitions/LoginResponse" } },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/mechanics/": {
+      "post": {
+        "tags": ["Mechanics"],
+        "summary": "Add Mechanic",
+        "description": "New mechanic created by admin.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/MechanicPayload" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Mechanic created", "schema": { "$ref": "#/definitions/MechanicResponse" } },
+          "400": { "description": "Invalid request" }
+        }
+      },
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get All Mechanics",
+        "description": "Retrieves all mechanics with pagination.",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "required": false },
+          { "name": "per_page", "in": "query", "type": "integer", "required": false }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of mechanics",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/MechanicResponse" } }
+          }
+        }
+      }
+    },
+    "/mechanics/{id}": {
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get Mechanic by ID",
+        "description": "Looks up a specific mechanic and their information by ID.",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": {
+          "200": { "description": "Mechanic found", "schema": { "$ref": "#/definitions/MechanicResponse" } },
+          "404": { "description": "Mechanic not found" }
+        }
+      },
+      "put": {
+        "tags": ["Mechanics"],
+        "summary": "Update Mechanic",
+        "description": "Update a mechanic information by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/MechanicUpdatePayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Mechanic updated", "schema": { "$ref": "#/definitions/MechanicResponse" } },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/mechanics/admin/update/{id}": {
+      "put": {
+        "tags": ["Mechanics"],
+        "summary": "Update Mechanic (Admin)",
+        "description": "Admin updates a mechanics information by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          { "in": "body", "name": "body", "schema": { "$ref": "#/definitions/MechanicPayload" } }
+        ],
+        "responses": {
+          "200": { "description": "Mechanic updated", "schema": { "$ref": "#/definitions/MechanicResponse" } },
+          "404": { "description": "Mechanic not found" }
+        }
+      }
+    },
+    "/mechanics/admin/delete/{id}": {
+      "delete": {
+        "tags": ["Mechanics"],
+        "summary": "Delete Mechanic (Admin)",
+        "description": "Admin deletes a mechanic by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": {
+          "204": { "description": "Mechanic deleted" },
+          "404": { "description": "Mechanic not found" }
+        }
+      }
+    },
+    "/mechanics/profile": {
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get Own Profile",
+        "description": "Mechanic retrieves their own profile information.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Mechanic profile", "schema": { "$ref": "#/definitions/MechanicResponse" } }
+        }
+      }
+    },
+    "/mechanics/my-tickets": {
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get Assigned Tickets",
+        "description": "Mechanic looks up all tickets assigned to themselves.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/TicketResponse" } }
+          }
+        }
+      }
+    },
+    "/mechanics/dashboard": {
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get Mechanic Dashboard",
+        "description": "Provides stats and data for the mechanics dashboard.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Dashboard data", "schema": { "type": "object" } }
+        }
+      }
+    },
+    "/mechanics/secure-data": {
+      "get": {
+        "tags": ["Mechanics"],
+        "summary": "Get Secured Data",
+        "description": "Mechanic retrieves own personal information.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Secured data", "schema": { "type": "object" } }
+        }
+      }
+    },
+    "/customers/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Customer Login",
+        "description": "Customer logs in and an authorization token is returned.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CustomerLoginPayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful login", "schema": { "$ref": "#/definitions/LoginResponse" } },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/customers/": {
+      "post": {
+        "tags": ["Customers"],
+        "summary": "Add Customer",
+        "description": "New customer created by admin.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CustomerPayload" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Customer created", "schema": { "$ref": "#/definitions/CustomerResponse" } },
+          "400": { "description": "Invalid request" }
+        }
+      },
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get All Customers",
+        "description": "View all the customers and their details.",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "required": false, "description": "Page number for Pagination." },
+          { "name": "per_page", "in": "query", "type": "integer", "required": false, "description": "Number of customers per page." }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of customers",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/CustomerResponse" } }
+          }
+        }
+      }
+    },
+    "/customers/register": {
+      "post": {
+        "tags": ["Customers"],
+        "summary": "Register Customer",
+        "description": "New customer registration.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CustomerPayload" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Customer created", "schema": { "$ref": "#/definitions/CustomerResponse" } },
+          "400": { "description": "Invalid request" }
+        }
+      }
+    },
+    "/customers/my-tickets": {
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get Created Tickets",
+        "description": "Customer retrieves all tickets created for them.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/TicketResponse" } }
+          }
+        }
+      }
+    },
+    "/customers/profile": {
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get Own Profile",
+        "description": "Customer views their own profile information.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Customer profile", "schema": { "$ref": "#/definitions/CustomerResponse" } }
+        }
+      },
+      "put": {
+        "tags": ["Customers"],
+        "summary": "Update Own Profile",
+        "description": "Customer updates their own profile information.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CustomerUpdatePayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Profile updated", "schema": { "$ref": "#/definitions/CustomerResponse" } },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get Customer by ID",
+        "description": "Retrieve a specific customer by ID.",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": {
+          "200": { "description": "Customer found", "schema": { "$ref": "#/definitions/CustomerResponse" } },
+          "404": { "description": "Customer not found" }
+        }
+      },
+      "put": {
+        "tags": ["Customers"],
+        "summary": "Update Customer",
+        "description": "Update customer information by ID.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          { "in": "body", "name": "body", "schema": { "$ref": "#/definitions/CustomerUpdatePayload" } }
+        ],
+        "responses": {
+          "200": { "description": "Customer updated", "schema": { "$ref": "#/definitions/CustomerResponse" } },
+          "400": { "description": "Invalid input" }
+        }
+      },
+      "delete": {
+        "tags": ["Customers"],
+        "summary": "Delete Customer",
+        "description": "Delete a customer by ID.",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": {
+          "204": { "description": "Customer deleted" },
+          "404": { "description": "Customer not found" }
+        }
+      }
+    },
+        "/service-tickets/customer/{id}/count": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get Customer Ticket Count",
+        "description": "Admin looks up the count of tickets assigned to each customer.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Customer ticket count",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "customer_id": { "type": "integer" },
+                  "customer_name": { "type": "string" },
+                  "ticket_count": { "type": "integer" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "service-tickets/{id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get Ticket by ID (Admin)",
+        "description": "Admin pulls up a specific service ticket by ID.",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": {
+          "200": { "description": "Ticket found", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "404": { "description": "Ticket not found" }
+        }
+      }
+    },
+    "/service-tickets/": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get All Tickets (Admin)",
+        "description": "Admin pulls up all service tickets with pagination.",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "required": false },
+          { "name": "per_page", "in": "query", "type": "integer", "required": false }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/TicketResponse" } }
+          }
+        }
+      }
+    },
+    "/service-tickets/{id}/mechanic": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get Ticket by ID (Mechanic)",
+        "description": "Mechanic pulls up any service ticket by ID.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Ticket by ID",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/TicketResponse" } }
+          }
+        }
+      }
+    },
+    "/service-tickets/{id}/assign-mechanic": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Assign Mechanic to Ticket",
+        "description": "Admin assigns a mechanic to a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "description": "Service Ticket ID" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mechanic_id": { "type": "integer", "description": "ID of mechanic to assign" }
+              },
+              "required": ["mechanic_id"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Mechanic assigned", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "404": { "description": "Ticket not found" }
+        }
+      }
+    },
+    "service-tickets/{id}/remove-mechanic{id}": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Remove Mechanic from Service Ticket",
+        "description": "Admin or Mechanic removes a mechanic from a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Service Ticket ID"
+          },
+          {
+            "name": "mechanic_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Mechanic ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Mechanic removed from ticket", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Ticket or Mechanic not found" }
+        }
+      }
+    },
+    "/service-tickets/mechanic/{id}/count": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get Mehanic Ticket Count",
+        "description": "Admin looks up the count of tickets assigned to any mechanic.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Mechanic ticket count",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mechanic_id": { "type": "integer" },
+                  "mechanic_name": { "type": "string" },
+                  "ticket_count": { "type": "integer" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service-tickets/{id}/add-part/{id}": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Add Part to Service Ticket",
+        "description": "Admin or Mechanic adds a part to a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Service Ticket ID"
+          },
+          {
+            "name": "part_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Part ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "quantity": { "type": "integer", "description": "Quantity of the part being added" }
+              },
+              "required": ["quantity"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Part added to ticket", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Ticket or Part not found" }
+        }
+      }
+    },
+    "/service-tickets/{id}/remove-part/{id}": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Remove Part from Service Ticket",
+        "description": "Admin or Mechanic removes a part from a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Service Ticket ID"
+          },
+          {
+            "name": "part_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Part ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "quantity": { 
+                  "type": "integer", 
+                  "description": "Quantity of the part being removed" }
+              },
+              "required": ["quantity"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Part added to ticket", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Ticket or Part not found" }
+        }
+      }
+    },
+    "/service-tickets/{id}/status": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Update Service Ticket Status",
+        "description": "Admin or Mechanic updates the status of a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", 
+          "in": "path", 
+          "required": true, 
+          "type": "integer", 
+          "description": "Service Ticket ID" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/TicketStatusPayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ticket status updated", "schema": { "$ref": "#/definitions/TicketStatusPayload" } },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Ticket not found" }
+        }
+      }
+    },
+    "/service-tickets/{id}/update": {
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Update Service Ticket",
+        "description": "Admin or Mechanic updates a service ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/TicketUpdatePayload" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ticket updated", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Ticket not found" }
+        }
+      }
+    },
+    "/service-tickets/mechanic/create": {
+      "post": {
+        "tags": ["Tickets"],
+        "summary": "Create Ticket",
+        "description": "Create a new ticket.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/TicketPayload" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Ticket created", "schema": { "$ref": "#/definitions/TicketResponse" } },
+          "400": { "description": "Invalid request" }
+        }
+      }
+    },
+    "/inventory/": {
+      "post": {
+        "tags": ["Inventory"],
+        "summary": "Add New Inventory Part",
+        "description": "Adds a new part to the inventory.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/InventoryPartPayload" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Part added to inventory", "schema": { "$ref": "#/definitions/InventoryPartResponse" } },
+          "400": { "description": "Invalid request" }
+        }
+      },
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get All Inventory Parts",
+        "description": "Anyone can see all parts in the inventory with pagination.",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "required": false },
+          { "name": "per_page", "in": "query", "type": "integer", "required": false }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of inventory parts",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/PublicPartResponse" } }
+          }
+        }
+      }
+    },
+    "/inventory/low-stock": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get Low Stock Inventory Parts (Mechanic)",
+        "description": "Mechanic can see all parts in the inventory that are low in stock. (threshold less than 10)",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { 
+            "name": "threshold", 
+            "in": "query", 
+            "type": "integer", 
+            "required": false, 
+            "description": "Show parts with stock quantity less than or equal to this number (10)." 
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of low stock inventory parts",
+            "schema": { 
+              "type": "array", 
+              "items": { "$ref": "#/definitions/InventoryPartResponse" } 
+            }
+          }
+        }
+      }
+    },
+    "/inventory/mechanic": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get All Inventory Parts (Mechanic)",
+        "description": "Mechanic can see all parts in the inventory with pagination.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "required": false },
+          { "name": "per_page", "in": "query", "type": "integer", "required": false }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of inventory parts",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/InventoryPartResponse" } }
+          }
+        }
+      }
+    },
+    "/inventory/mechanic/search": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get Inventory Part by name (Mechanic)",
+        "description": "Mechanic can search for a specific part in the inventory by name.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { 
+            "name": "qPartName", 
+            "in": "query", 
+            "required": true, 
+            "type": "string",
+            "description": "Inventory Part name"
+            }
+          ],
+        "responses": {
+          "200": {
+            "description": "Inventory Part name found",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/PublicPartResponse" }
+            }
+          },
+          "404": { "description": "Part not found" }
+        }
+      }
+    },
+    "/inventory/mechanic/{id}": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get an Inventory Part by ID (Mechanic)",
+        "description": "Mechanic can search for a specific part in the inventory by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { 
+            "name": "id", 
+            "in": "path",
+            "required": true, 
+            "type": "integer",
+            "description": "Inventory Part ID"
+            }
+          ],
+        "responses": {
+          "200": {
+            "description": "Inventory Part found",
+            "schema": { "$ref": "#/definitions/InventoryPartResponse" }
+          },
+          "404": { "description": "Part not found" }
+        }
+      }
+    },
+    "/inventory/search": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get Inventory Part by name (Public)",
+        "description": "Anyone can search for a specific part in the inventory by name.",
+        "parameters": [
+          { 
+            "name": "qPartName", 
+            "in": "query", 
+            "required": true, 
+            "type": "string",
+            "description": "Inventory Part name"
+            }
+          ],
+        "responses": {
+          "200": {
+            "description": "Inventory Part name found",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/PublicPartResponse" }
+            }
+          },
+          "404": { "description": "Part not found" }
+        }
+      }
+    },
+    "/inventory/{id}": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "Get Inventory Part by ID (Public)",
+        "description": "Anyone can search for a specific part in the inventory by ID.",
+        "parameters": [
+          { 
+            "name": "id", 
+            "in": "path", 
+            "required": true, 
+            "type": "integer",
+            "description": "Inventory Part ID"
+            }
+          ],
+        "responses": {
+          "200": {
+            "description": "Inventory Part found",
+            "schema": { "$ref": "#/definitions/PublicPartResponse" }
+          },
+          "404": { "description": "Part not found" }
+        }
+      },
+      "put": {
+        "tags": ["Inventory"],
+        "summary": "Update an Inventory Part by ID",
+        "description": "Mechanic updates an inventory part by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          { "in": "body", "name": "body", "schema": { "$ref": "#/definitions/InventoryPartPayload" } }
+        ],
+        "responses": {
+          "200": { "description": "Inventory part updated", "schema": { "$ref": "#/definitions/InventoryPartResponse" } },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Part not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Inventory"],
+        "summary": "Delete an Inventory Part by ID",
+        "description": "Mechanic deletes an inventory part by ID.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { 
+            "name": "id", 
+            "in": "path", 
+            "required": true, 
+            "type": "integer", 
+            "description": "Inventory Part ID"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Inventory part deleted" },
+          "404": { "description": "Part not found" }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "AdminLoginPayload": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "example": "admin" },
+        "password": { "type": "string", "example": "admin123" }
+      },
+      "required": ["username", "password"]
+    },
+    "MechanicLoginPayload": {
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "example": "mechanic@example.com" },
+        "password": { "type": "string", "example": "password123" }
+      },
+      "required": ["email", "password"]
+    },
+    "CustomerLoginPayload": {
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "example": "customer@example.com" },
+        "password": { "type": "string", "example": "password123" }
+      },
+      "required": ["email", "password"]
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": { "type": "string", "example": "jwt_token_here" }
+      }
+    },
+    "MechanicPayload": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string", "example": "9874641234" },
+        "address": { "type": "string" },
+        "hours_worked": { "type": "integer", "example": 0 },
+        "password": { "type": "string" }
+      },
+      "required": ["name", "email", "phone", "address", "password"]
+    },
+    "MechanicResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "hours_worked": { "type": "integer" }
+      }
+    },
+    "MechanicUpdatePayload": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string", "example": "9874641234" },
+        "address": { "type": "string" },
+        "hours_worked": { "type": "integer", "example": 0 }
+      }
+    },
+    "TicketResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "description": { "type": "string" },
+        "status": { "type": "string" },
+        "customer_id": { "type": "integer" },
+        "vehicle_id": { "type": "string" },
+        "hours_worked": { "type": "integer" },
+        "repair": { "type": "string" },
+        "mechanics": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MechanicResponse" }
+        }
+      }
+    },
+    "TicketPayload": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "in_progress", "closed"] },
+        "customer_id": { "type": "integer" },
+        "vehicle_id": { "type": "string" },
+        "hours_worked": { "type": "integer" },
+        "repair": { "type": "string" }
+      },
+      "required": ["description", "status", "customer_id", "vehicle_id", "hours_worked", "repair"]
+    },
+    "TicketStatusPayload": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["completed", "in_progress", "canceled"] }
+      },
+      "required": ["status"]
+    },
+    "TicketUpdatePayload": {
+      "type": "object",
+        "properties": {
+        "description": { "type": "string" },
+        "hours_worked": { "type": "integer" }
+      },
+      "required": ["description", "hours_worked"]
+    },
+    "CustomerPayload": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" }
+      },
+      "required": ["name", "email", "phone", "address"]
+    },
+    "CustomerUpdatePayload": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" }
+      }
+    },
+    "CustomerResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" }
+      }
+    },
+    "InventoryPartResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "price": { "type": "number", "format": "float" }
+      }
+    },
+    "InventoryPartPayload": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "price": { "type": "number", "format": "float" }
+      },
+  "required": ["name", "quantity", "price"]
+    },
+    "PublicPartResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "quantity": { "type": "integer" }
+      }
+    }
+  }
+}

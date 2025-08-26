@@ -6,7 +6,6 @@ class MechanicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic
         load_instance = True
-        exclude = ['password']
 class MechanicCreateSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic

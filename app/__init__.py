@@ -1,13 +1,18 @@
-from flask import Flask
+from flask import Flask, jsonify
 from app.extensions import db, ma, limiter
 import os
 from app.blueprints.mechanic import mechanic_bp
 from app.blueprints.service_ticket import service_ticket_bp
 from app.blueprints.customer import customer_bp
 from app.blueprints.inventory import inventory_bp
+from flask_swagger import swagger
+from flask_swagger_ui import get_swaggerui_blueprint
+from app.config import config 
 
-def create_app():
+def create_app(config_name = 'default'):
     app = Flask(__name__)
+    if config_name == "testing":
+        app.config.from_object("app.config.TestingConfig")
     
     FIXED_SECRET_KEY = "mechanic-shop-development-secret-key-2025-very-long-and-secure-fixed"
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', FIXED_SECRET_KEY)
@@ -27,6 +32,8 @@ def create_app():
     app.register_blueprint(service_ticket_bp, url_prefix = '/service-tickets')
     app.register_blueprint(customer_bp, url_prefix = '/customers')
     app.register_blueprint(inventory_bp, url_prefix = '/inventory')
+
+
     
     @app.route('/')
     def home():
@@ -47,4 +54,6 @@ def create_app():
     def health():
         return {'status': 'healthy', 'database': 'connected', 'type': 'SQLite'}
     
+
+
     return app

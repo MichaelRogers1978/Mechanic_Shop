@@ -52,9 +52,20 @@ def mechanic_create_ticket(current_mechanic_id):
 @admin_token_required
 def get_tickets(current_admin_id):
     try:
-        tickets = ServiceTicket.query.all()
-        logger.info(f"GET_TICKETS: Admin {current_admin_id} retrieved all tickets.")
-        return tickets_schema.jsonify(tickets)
+        page = request.args.get('page', 1, type = int)
+        per_page = request.args.get('per_page', 10, type = int)
+        if per_page > 50:
+            per_page = 50
+
+        tickets_paginated = ServiceTicket.query.paginate(page = page, per_page = per_page, error_out = False)
+        logger.info(f"GET_TICKETS: Admin {current_admin_id} retrieved tickets page {page}.")
+
+        return jsonify({
+            "current_page": tickets_paginated.page,
+            "total_pages": tickets_paginated.pages,
+            "total_tickets": tickets_paginated.total,
+            "tickets": tickets_schema.dump(tickets_paginated.items)
+        })
     except Exception as e:
         logger.error(f"GET_TICKETS_ERROR: Admin {current_admin_id} - {str(e)}")
         return jsonify({'error': "Failed to retrieve tickets."}), 500

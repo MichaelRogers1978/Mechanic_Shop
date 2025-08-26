@@ -1,9 +1,19 @@
 from app import create_app
 from app.extensions import db
-from app.models import Mechanic
+from app.models import Mechanic, Admin, Customer
 from werkzeug.security import generate_password_hash
+from flask_swagger_ui import get_swaggerui_blueprint
 
-app = create_app()
+app = create_app("testing")
+
+SWAGGER_URL = '/api/docs'
+API_URL = '/static/swagger.json'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config = {'app_name': "Mehaninc Shop"}
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix = SWAGGER_URL)
 
 if __name__ == "__main__":
     with app.app_context():
@@ -35,48 +45,6 @@ if __name__ == "__main__":
                 print(f"JWT decode test failed: {decode_error}")
         else:
             print("JWT encoding test failed!")
-        
-        try:
-            test_mechanic = Mechanic.query.filter_by(email = "test@mechanic.com").first()
-            if not test_mechanic:
-                test_mechanic = Mechanic(
-                    name = "Test Mechanic",
-                    email = "test@mechanic.com",
-                    phone = "1234567890",
-                    address = "123 Test St",
-                    hours_worked = 0,
-                    password = generate_password_hash("test123")
-                )
-                db.session.add(test_mechanic)
-                db.session.commit()
-                print("Test mechanic created: test@mechanic.com / test123")
-            else:
-                print("Test mechanic already exists: test@mechanic.com / test123")
-                
-        except Exception as e:
-            print(f"Test data creation failed: {e}")
-            db.session.rollback()
-        
-        try:
-            from app.models import Customer
-            test_customer = Customer.query.filter_by(email="test@customer.com").first()
-            if not test_customer:
-                test_customer = Customer(
-                    name = "Test Customer",
-                    email = "test@customer.com",
-                    phone = 9876543210,
-                    address = "456 Customer Ave",
-                    password = generate_password_hash("customer123")
-                )
-                db.session.add(test_customer)
-                db.session.commit()
-                print("Test customer created: test@customer.com / customer123")
-            else:
-                print("Test customer already exists: test@customer.com / customer123")
-                
-        except Exception as e:
-            print(f"Test customer creation failed: {e}")
-            db.session.rollback()
             
         print("\n" + "=" *50)
         print("ADMIN SETUP COMPLETE")
@@ -87,19 +55,6 @@ if __name__ == "__main__":
         print("  Login URL: POST /mechanics/admin/login")
         print("=" *50)
         
-        try:
-            from app.autho.utils import encode_admin_token
-            test_admin_token = encode_admin_token(1)
-            if test_admin_token:
-                print(f"Admin token test successful (length: {len(test_admin_token)})")
-                print(f"   Token preview: {test_admin_token[:30]}.")
-            else:
-                print("Admin token test failed!")
-        except ImportError:
-            print("encode_admin_token not found - add to app/autho/utils.py")
-        except Exception as admin_error:
-            print(f"Admin token test error: {admin_error}")
-        
         print("=" *50 + "\n")
         
     print("Starting Flask application...")
@@ -107,3 +62,4 @@ if __name__ == "__main__":
     print("API available at: http://localhost:5000")
     print(f"Using secret key: {get_secret_key()[:20]}.")
     app.run(debug = True, host = '0.0.0.0', port = 5000)
+    

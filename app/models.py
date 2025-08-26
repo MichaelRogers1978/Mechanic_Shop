@@ -10,18 +10,30 @@ service_ticket_inventory = db.Table('service_ticket_inventory',
     db.Column('service_ticket_id', db.Integer, db.ForeignKey('service_ticket.id'), primary_key = True),
     db.Column('inventory_id', db.Integer, db.ForeignKey('inventory.id'), primary_key = True)
 )
+class Admin(db.Model):
+    __tablename__ = 'admin'
+
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(150), nullable = False)
+    username = db.Column(db.String(150), unique = True, nullable = False)
+    password = db.Column(db.String(250), nullable = False)
+    email = db.Column(db.String(300), unique = True, nullable = True)
+    address = db.Column(db.String(250))
+
 class Mechanic(db.Model):
     __tablename__ = 'mechanic'
     
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(150), nullable = False)
+    username = db.Column(db.String(100), nullable = False, unique = True)
     email = db.Column(db.String(300), nullable = False, unique = True)
     phone = db.Column(db.Integer, nullable = False)
     address = db.Column(db.String(200), nullable = False)
     hours_worked = db.Column(db.Integer, nullable = False, default = 0)
     password = db.Column(db.String(250), nullable = True)
+    specialty = db.Column(db.String(100), nullable=True)
     
-    service_tickets = db.relationship('ServiceTicket', secondary = service_ticket_mechanic, back_populates='mechanics')
+    service_tickets = db.relationship('ServiceTicket', secondary = service_ticket_mechanic, back_populates = 'mechanics')
     
 class ServiceTicket(db.Model):
     __tablename__ = 'service_ticket'
