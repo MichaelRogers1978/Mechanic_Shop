@@ -3,8 +3,9 @@ from app.extensions import db
 from app.models import Mechanic, Admin, Customer
 from werkzeug.security import generate_password_hash
 from flask_swagger_ui import get_swaggerui_blueprint
+import os
 
-app = create_app("testing")
+app = create_app("ProductionConfig")
 
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.json'
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     with app.app_context():
         print("Initializing Mechanic Shop Database.")
         
-        #db.drop_all()
+        #db.drop_all()>
         
         db.create_all()
         print("Database tables ready!")
@@ -61,5 +62,5 @@ if __name__ == "__main__":
     print("Tokens will be valid for 8 hours")
     print("API available at: http://localhost:5000")
     print(f"Using secret key: {get_secret_key()[:20]}.")
-    app.run(debug = True, host = '0.0.0.0', port = 5000)
+
     

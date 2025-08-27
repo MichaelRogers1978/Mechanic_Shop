@@ -9,6 +9,11 @@ class Config:
     
 import os
 
+class ProductionConfig:
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    DEBUG = False
+    CACHE_TYPE = 'SimpleCache'
+
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -26,5 +31,6 @@ class TestingConfig(Config):
 config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
+    "production": ProductionConfig
 }
  
