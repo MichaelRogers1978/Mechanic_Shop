@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": "API for managing mechanics, customers, service tickets and inventory."
   },
-  "host": "mechanic-shop-12.onrender.com",
+  "host": "mechanic-shop-13.onrender.com",
   "basePath": "/",
   "schemes": ["https"],
   "securityDefinitions": {

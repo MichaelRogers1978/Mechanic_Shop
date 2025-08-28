@@ -6,11 +6,13 @@ from app.blueprints.customer import customer_bp
 from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
+from flask_cors import CORS
 
 def create_app(config_name):
     app = Flask(__name__)
 
     app.config.from_object(config[config_name])
+    CORS(app)
 
     db.init_app(app)
     ma.init_app(app)
