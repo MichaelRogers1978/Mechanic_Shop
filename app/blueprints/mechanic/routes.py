@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import select
 from . import mechanic_bp
@@ -15,7 +15,6 @@ from app.blueprints.service_ticket.schemas import tickets_schema
 import logging
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask import current_app
 from datetime import datetime
 
 logging.basicConfig(level = logging.INFO)

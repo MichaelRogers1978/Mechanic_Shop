@@ -5,7 +5,6 @@ from app.blueprints.mechanic import mechanic_bp
 from app.blueprints.service_ticket import service_ticket_bp
 from app.blueprints.customer import customer_bp
 from app.blueprints.inventory import inventory_bp
-from flask_swagger import swagger
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config 
 
