@@ -1,58 +1,42 @@
 from flask import Flask, jsonify
 from app.extensions import db, ma, limiter
-import os
 from app.blueprints.mechanic import mechanic_bp
 from app.blueprints.service_ticket import service_ticket_bp
 from app.blueprints.customer import customer_bp
 from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
-from app.config import config 
+from app.config import config
 
-def create_app(config_name = 'default'):
+def create_app(config_name):
     app = Flask(__name__)
-    if config_name == "testing":
-        app.config.from_object("app.config.TestingConfig")
-    
-    FIXED_SECRET_KEY = "mechanic-shop-development-secret-key-2025-very-long-and-secure-fixed"
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', FIXED_SECRET_KEY)
-    
-    database_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'mechanic_shop.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'mysql+mysqlconnector://root:1234ThumbWar@localhost/Mechanic_Shop')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
-    app.config['RATELIMIT_DEFAULT'] = "1000 per hour"
-    
+
+    app.config.from_object(config[config_name])
+
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
-        
-    app.register_blueprint(mechanic_bp, url_prefix = '/mechanics')
-    app.register_blueprint(service_ticket_bp, url_prefix = '/service-tickets')
-    app.register_blueprint(customer_bp, url_prefix = '/customers')
-    app.register_blueprint(inventory_bp, url_prefix = '/inventory')
 
+    app.register_blueprint(mechanic_bp, url_prefix='/mechanics')
+    app.register_blueprint(service_ticket_bp, url_prefix='/service-tickets')
+    app.register_blueprint(customer_bp, url_prefix='/customers')
+    app.register_blueprint(inventory_bp, url_prefix='/inventory')
 
-    
     @app.route('/')
     def home():
         return {
             'message': 'Mechanic Shop API',
             'version': '1.0',
             'status': 'running',
-            'database': 'SQLite',
             'endpoints': {
                 'mechanics': '/mechanics/',
-                'customers': '/customers/', 
+                'customers': '/customers/',
                 'service_tickets': '/service-tickets/',
                 'inventory': '/inventory/'
             }
         }
-    
+
     @app.route('/health')
     def health():
-        return {'status': 'healthy', 'database': 'connected', 'type': 'SQLite'}
-    
-
+        return {'status': 'healthy'}
 
     return app

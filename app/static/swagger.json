@@ -5,8 +5,9 @@
     "version": "1.0.0",
     "description": "API for managing mechanics, customers, service tickets and inventory."
   },
+  "host": "mechanic-shop-12.onrender.com",
   "basePath": "/",
-  "schemes": ["http"],
+  "schemes": ["https"],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -376,7 +377,7 @@
         }
       }
     },
-    "service-tickets/{id}": {
+    "/service-tickets/{id}": {
       "get": {
         "tags": ["Tickets"],
         "summary": "Get Ticket by ID (Admin)",
@@ -405,7 +406,7 @@
         }
       }
     },
-    "/service-tickets/{id}/mechanic": {
+    "/service-tickets/{id}/mechanic/": {
       "get": {
         "tags": ["Tickets"],
         "summary": "Get Ticket by ID (Mechanic)",
@@ -446,7 +447,7 @@
         }
       }
     },
-    "service-tickets/{id}/remove-mechanic{id}": {
+    "/service-tickets/{id}/remove-mechanic{id}": {
       "put": {
         "tags": ["Tickets"],
         "summary": "Remove Mechanic from Service Ticket",
