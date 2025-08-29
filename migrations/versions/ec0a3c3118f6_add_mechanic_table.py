@@ -35,7 +35,7 @@ def upgrade():
     #with op.batch_alter_table('admin', schema=None) as batch_op:
         #batch_op.drop_index(batch_op.f('email'))
         #batch_op.drop_index(batch_op.f('username'))
-    op.drop_table('admin')
+    #op.drop_table('admin')
 
     op.drop_table('service_ticket')
 
@@ -87,21 +87,21 @@ def downgrade():
     mysql_default_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
-    op.create_table('admin',
-    sa.Column('id', mysql.INTEGER(), autoincrement=True, nullable=False),
-    sa.Column('name', mysql.VARCHAR(length=150), nullable=False),
-    sa.Column('username', mysql.VARCHAR(length=150), nullable=False),
-    sa.Column('password', mysql.VARCHAR(length=250), nullable=False),
-    sa.Column('email', mysql.VARCHAR(length=300), nullable=True),
-    sa.Column('address', mysql.VARCHAR(length=250), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    mysql_collate='utf8mb4_0900_ai_ci',
-    mysql_default_charset='utf8mb4',
-    mysql_engine='InnoDB'
-    )
-    with op.batch_alter_table('admin', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('username'), ['username'], unique=True)
-        batch_op.create_index(batch_op.f('email'), ['email'], unique=True)
+#    op.create_table('admin',
+#    sa.Column('id', mysql.INTEGER(), autoincrement=True, nullable=False),
+#    sa.Column('name', mysql.VARCHAR(length=150), nullable=False),
+#    sa.Column('username', mysql.VARCHAR(length=150), nullable=False),
+#    sa.Column('password', mysql.VARCHAR(length=250), nullable=False),
+#    sa.Column('email', mysql.VARCHAR(length=300), nullable=True),
+#    sa.Column('address', mysql.VARCHAR(length=250), nullable=True),
+#    sa.PrimaryKeyConstraint('id'),
+#    mysql_collate='utf8mb4_0900_ai_ci',
+#    mysql_default_charset='utf8mb4',
+#    mysql_engine='InnoDB'
+#    )
+#    with op.batch_alter_table('admin', schema=None) as batch_op:
+#        batch_op.create_index(batch_op.f('username'), ['username'], unique=True)
+#        batch_op.create_index(batch_op.f('email'), ['email'], unique=True)
 
     op.create_table('service_ticket_inventory',
     sa.Column('service_ticket_id', mysql.INTEGER(), autoincrement=False, nullable=False),
