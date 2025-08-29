@@ -52,9 +52,8 @@ class CustomerRoutesTestCase(unittest.TestCase):
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
-            #db.session.execute(text('SET FOREIGN_KEY_CHECKS = 0;'))
+
             db.drop_all()
-            #db.session.execute(text('SET FOREIGN_KEY_CHECKS = 1;'))
 
 
     def test_customer_login_success(self):

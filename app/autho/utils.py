@@ -287,7 +287,7 @@ def admin_token_required(f):
     return decorated
 
 def decode_admin_token(token):
-    secret_key = current_app.config.get('SECRET_KEY')
+    secret_key = get_secret_key()
     try:
         payload = jwt.decode(token, secret_key, algorithms = ['HS256'])
         if payload.get('role') != 'admin':
