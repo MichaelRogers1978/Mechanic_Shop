@@ -385,40 +385,36 @@ def add_part_to_ticket(ticket_id, inventory_id):
     
 @service_ticket_bp.route("/<int:ticket_id>/remove-part/<int:inventory_id>", methods = ['PUT'])
 def remove_part_from_ticket(ticket_id, inventory_id):
-
     token = request.headers.get('Authorization', '').replace('Bearer ', '')
-    
     if not token:
         return jsonify({'error': 'Authorization token required'}), 401
-    
+
     from app.autho.utils import decode_mechanic_token
     mechanic_requesting_id = decode_mechanic_token(token)
-    
     if not mechanic_requesting_id:
         return jsonify({'error': 'Invalid or expired mechanic token'}), 401
-    
+
     try:
         ticket = ServiceTicket.query.get_or_404(ticket_id)
         part = Inventory.query.get_or_404(inventory_id)
-        
+
         requesting_mechanic = Mechanic.query.get(mechanic_requesting_id)
         if requesting_mechanic not in ticket.mechanics:
             return jsonify({
                 'error': 'Only mechanics assigned to this ticket can remove parts.'
             }), 403
-        
+
         if part not in ticket.parts:
             return jsonify({
                 'message': f'Part {part.name} is not assigned to this ticket.',
                 'ticket': ticket_schema.dump(ticket)
             }), 200
-        
+
         ticket.parts.remove(part)
-                
         db.session.commit()
-        
+
         logger.info(f"TICKET_REMOVE_PART: Mechanic {mechanic_requesting_id} removed part {inventory_id} ({part.name}) from ticket {ticket_id}.")
-        
+
         return jsonify({
             'message': f'Part {part.name} successfully removed from ticket {ticket_id}',
             'ticket': ticket_schema.dump(ticket),
@@ -436,7 +432,7 @@ def remove_part_from_ticket(ticket_id, inventory_id):
             ],
             'total_parts': len(ticket.parts)
         }), 200
-        
+
     except Exception as e:
         db.session.rollback()
         logger.error(f"TICKET_REMOVE_PART_ERROR: Mechanic {mechanic_requesting_id}, Ticket {ticket_id}, Part {inventory_id} - {str(e)}")
