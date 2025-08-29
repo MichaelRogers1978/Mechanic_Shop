@@ -22,6 +22,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     WTF_CSRF_ENABLED = False
     DEBUG = False
+    print("TEST DB URI:", os.environ.get("SQLALCHEMY_DATABASE_URI"))
 
 config = {
     "development": DevelopmentConfig,
