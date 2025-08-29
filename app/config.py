@@ -19,7 +19,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:1234ThumbWar@localhost/Mechanic_Shop'
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     WTF_CSRF_ENABLED = False
     DEBUG = False
 
