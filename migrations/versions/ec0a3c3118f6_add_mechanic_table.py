@@ -23,24 +23,24 @@ def upgrade():
     op.drop_table('service_ticket_inventory')
 
     # Now drop referenced tables and indexes
-    with op.batch_alter_table('mechanic', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('email'))
-        batch_op.drop_index(batch_op.f('username'))
+    #with op.batch_alter_table('mechanic', schema=None) as batch_op:
+        #batch_op.drop_index(batch_op.f('email'))
+        #batch_op.drop_index(batch_op.f('username'))
     op.drop_table('mechanic')
 
-    with op.batch_alter_table('inventory', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('name'))
+    #with op.batch_alter_table('inventory', schema=None) as batch_op:
+        #batch_op.drop_index(batch_op.f('name'))
     op.drop_table('inventory')
 
-    with op.batch_alter_table('admin', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('email'))
-        batch_op.drop_index(batch_op.f('username'))
+    #with op.batch_alter_table('admin', schema=None) as batch_op:
+        #batch_op.drop_index(batch_op.f('email'))
+        #batch_op.drop_index(batch_op.f('username'))
     op.drop_table('admin')
 
     op.drop_table('service_ticket')
 
-    with op.batch_alter_table('customer', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('email'))
+    #with op.batch_alter_table('customer', schema=None) as batch_op:
+        #batch_op.drop_index(batch_op.f('email'))
     op.drop_table('customer')
     # ### end Alembic commands ###
 

@@ -8,6 +8,11 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
 from flask_cors import CORS
 from flask_migrate import Migrate
+from .models import Mechanic, ServiceTicket, Inventory
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app(config_name):
     app = Flask(__name__)
