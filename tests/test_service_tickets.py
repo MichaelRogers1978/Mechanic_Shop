@@ -59,6 +59,7 @@ class TestServiceTicketRoutes(unittest.TestCase):
             )
             ticket.mechanics.append(mechanic)
             db.session.add(ticket)
+            ticket.parts.append(part)
             db.session.commit()
 
             self.customer_id = customer.id
