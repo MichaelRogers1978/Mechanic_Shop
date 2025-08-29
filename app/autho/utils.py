@@ -243,7 +243,7 @@ def encode_admin_token(admin_id):
             'iat': datetime.utcnow()
         }
         
-        token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm = 'HS256')
+        token = jwt.encode(payload, get_secret_key(), algorithm = 'HS256')
         return token
         
     except Exception as e:
@@ -263,9 +263,9 @@ def admin_token_required(f):
                 return jsonify({'error': 'Invalid authorization header format.'}), 401
             
             token = auth_header.split(' ')[1]
-            
-            secret_key = current_app.config.get('SECRET_KEY')
-            
+
+            secret_key = get_secret_key()
+
             try:
                 payload = jwt.decode(token, secret_key, algorithms = ['HS256'])
                 
@@ -299,7 +299,7 @@ def decode_admin_token(token):
     
 
 def decode_mechanic_token(token):
-    secret_key = current_app.config.get('SECRET_KEY')
+    secret_key = get_secret_key()
     try:
         payload = jwt.decode(token, secret_key, algorithms = ['HS256'])
         if payload.get('role') != 'mechanic':

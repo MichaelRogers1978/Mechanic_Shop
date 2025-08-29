@@ -18,6 +18,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
 class TestingConfig(Config):
+    SECRET_KEY = os.environ.get("SECRET_KEY", "super-secret-key")
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     WTF_CSRF_ENABLED = False

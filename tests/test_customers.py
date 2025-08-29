@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 class CustomerRoutesTestCase(unittest.TestCase):
 
     def setUp(self):
+        os.environ["SECRET_KEY"] = "super-secret-key"
         self.app = create_app("testing")
         self.client = self.app.test_client()
 
