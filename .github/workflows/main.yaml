@@ -30,13 +30,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Initialize database
+      - name: Run migrations
         env:
           FLASK_ENV: testing
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
         run: |
-          python -c "from flask_app import app, db; with app.app_context(): db.create_all()"
+          flask db upgrade
 
       - name: Run unit tests
         env:
@@ -69,13 +69,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Initialize database
+      - name: Run migrations
         env:
           FLASK_ENV: production
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
         run: |
-          python -c "from flask_app import app, db; with app.app_context(): db.create_all()"
+          flask db upgrade
 
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
