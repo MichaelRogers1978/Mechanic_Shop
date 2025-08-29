@@ -27,7 +27,6 @@ marshmallow==4.0.0
 marshmallow-sqlalchemy==1.4.2
 mdurl==0.1.2
 mypy_extensions==1.1.0
-mysql-connector-python==9.3.0
 ordered-set==4.1.0
 packaging==25.0
 pathspec==0.12.1
