@@ -33,7 +33,7 @@ jobs:
         env:
           FLASK_ENV: testing
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SQLALCHEMY_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python -m unittest discover tests
 
