@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 class TestServiceTicketRoutes(unittest.TestCase):
 
     def setUp(self):
+        os.environ["SECRET_KEY"] = "mechanic-shop-development-secret-key-2025-very-long-and-secure-fixed"
         self.app = create_app("testing")
         self.client = self.app.test_client()
 
@@ -120,18 +121,18 @@ class TestServiceTicketRoutes(unittest.TestCase):
 
     def test_add_part_to_ticket_mechanic(self):
         headers = {"Authorization": f"Bearer {self.mechanic_token}"}
-        inventory_id = 1
+        inventory_id = self.part_id
         response = self.client.put(f"/service-tickets/{self.ticket_id}/add-part/{inventory_id}", headers = headers)
         self.assertIn(response.status_code, [200, 404])
 
     def test_add_part_to_ticket_unauthorized(self):
-        inventory_id = 1
+        inventory_id = self.part_id
         response = self.client.put(f"/service-tickets/{self.ticket_id}/add-part/{inventory_id}")
         self.assertEqual(response.status_code, 401)
 
     def test_remove_part_from_ticket_mechanic(self):
         headers = {"Authorization": f"Bearer {self.mechanic_token}"}
-        inventory_id = 1
+        inventory_id = self.part_id
         response = self.client.put(
             f"/service-tickets/{self.ticket_id}/remove-part/{inventory_id}",
             headers=headers,
@@ -140,7 +141,7 @@ class TestServiceTicketRoutes(unittest.TestCase):
         self.assertIn(response.status_code, [200, 404])
 
     def test_remove_part_from_ticket_unauthorized(self):
-        inventory_id = 1
+        inventory_id = self.part_id
         response = self.client.put(f"/service-tickets/{self.ticket_id}/remove-part/{inventory_id}")
         self.assertEqual(response.status_code, 401)
 
