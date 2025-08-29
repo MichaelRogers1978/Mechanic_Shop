@@ -7,6 +7,7 @@ from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -17,6 +18,7 @@ def create_app(config_name):
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
+    migrate = Migrate(app, db)
 
     app.register_blueprint(mechanic_bp, url_prefix='/mechanics')
     app.register_blueprint(service_ticket_bp, url_prefix='/service-tickets')
