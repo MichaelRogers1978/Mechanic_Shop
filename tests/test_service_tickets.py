@@ -132,7 +132,11 @@ class TestServiceTicketRoutes(unittest.TestCase):
     def test_remove_part_from_ticket_mechanic(self):
         headers = {"Authorization": f"Bearer {self.mechanic_token}"}
         inventory_id = 1
-        response = self.client.put(f"/service-tickets/{self.ticket_id}/remove-part/{inventory_id}", headers = headers)
+        response = self.client.put(
+            f"/service-tickets/{self.ticket_id}/remove-part/{inventory_id}",
+            headers=headers,
+            json={"mechanic_id": self.mechanic_id}
+        )
         self.assertIn(response.status_code, [200, 404])
 
     def test_remove_part_from_ticket_unauthorized(self):
