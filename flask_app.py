@@ -6,7 +6,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 import os
 from jose import jwt
 
-app = create_app("production")
+app = create_app("testing")
 
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.json'
