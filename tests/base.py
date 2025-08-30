@@ -12,7 +12,7 @@ class BaseTestCase(unittest.TestCase):
         with self.app.app_context():
             db.create_all()
             
-            print("Tables:", db.inspect(db.engin).get_table_names())
+            print("Tables after creat_all():", db.inspect(db.engin).get_table_names())
 
             self.admin_email = "admin@example.com"
             self.admin_password = "adminpass"

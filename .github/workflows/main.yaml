@@ -10,6 +10,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      FLASK_APP: flask_app.py
+      FLASK_ENV: testing
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
 
     steps:
       - name: Checkout repository

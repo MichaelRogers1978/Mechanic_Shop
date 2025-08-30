@@ -20,10 +20,9 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     SECRET_KEY = os.environ.get("SECRET_KEY", "super-secret-key")
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI", "postgresql://mikerogers:6ES8Ys6IGMUQODfS80nWkzcjlKhcbcjj@dpg-d2n7vkvdiees73ca3ing-a.oregon-postgres.render.com/mechanic_shop_project")
     WTF_CSRF_ENABLED = False
     DEBUG = False
-    print("TEST DB URI:", os.environ.get("SQLALCHEMY_DATABASE_URI"))
 
 config = {
     "development": DevelopmentConfig,
