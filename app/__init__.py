@@ -18,7 +18,7 @@ load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_name):
+def create_app(config_name = None):
     app = Flask(__name__)
 
     app.config.from_object(config[config_name])
@@ -28,6 +28,7 @@ def create_app(config_name):
     ma.init_app(app)
     limiter.init_app(app)
     migrate = Migrate(app, db)
+    migrate.init_app(app, db)
 
     app.register_blueprint(mechanic_bp, url_prefix='/mechanics')
     app.register_blueprint(service_ticket_bp, url_prefix='/service-tickets')
