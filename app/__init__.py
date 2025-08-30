@@ -26,7 +26,7 @@ def create_app(config_name=None):
     migrate = Migrate(app, db)
 
     with app.app_context():
-        from . import models
+        from .models import Customer, Mechanic, ServiceTicket, Inventory
 
     app.register_blueprint(mechanic_bp, url_prefix='/mechanics')
     app.register_blueprint(service_ticket_bp, url_prefix='/service-tickets')
