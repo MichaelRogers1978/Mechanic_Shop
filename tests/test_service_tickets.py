@@ -7,68 +7,62 @@ from app.autho.__init__ import encode_token, encode_mechanic_token
 from app.autho.utils import encode_admin_token
 import sys
 import os
+from tests.base import BaseTestCase
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-class TestServiceTicketRoutes(unittest.TestCase):
+class TestServiceTicketRoutes(BaseTestCase):
 
     def setUp(self):
-        os.environ["SECRET_KEY"] = "mechanic-shop-development-secret-key-2025-very-long-and-secure-fixed"
-        self.app = create_app("testing")
-        self.client = self.app.test_client()
+        super().setUp()
+        self.create_test_ticket()
+        
+def create_test_ticket(self):
+    import uuid
+    unique_id = str(uuid.uuid4())[:8]
+    
+    customer = Customer(
+        name = "John Doe",
+        email = f"john{unique_id}@test.com",
+        password = generate_password_hash("pass123"),
+        phone = "12345670",
+        address = "589 Help Way"
+    )
+    db.session.add(customer)
+    
+    mechanic = Mechanic(
+        name = "Jane Mechanic",
+        username = f"janemech{unique_id}",
+        email = f"jane{unique_id}@test.com",
+        phone = "123456788",
+        address = "456 Mechanic Ave",
+        password = generate_password_hash("mech123"),
+        hours_worked = 0,
+        specialty = "Engine"
+        )
+    db.session.add(mechanic)
 
-        with self.app.app_context():
-            db.create_all()
+    part = Inventory(
+        name = "Test Part",
+        price = 19.99,
+        quantity = 10
+    )
+    db.session.add(part)
+    db.session.flush()
 
-            import uuid
-            unique_id = str(uuid.uuid4())[:8]
-            customer = Customer(
-                name = "John Doe",
-                email = f"john{unique_id}@test.com",
-                password = generate_password_hash("pass123"),
-                phone = "12345670",
-                address = "789 Help Way"
-            )
-            db.session.add(customer)
+    ticket = ServiceTicket(description="Oil change", status="open", customer_id=customer.id)
+    ticket.mechanics.append(mechanic)
+    ticket.parts.append(part)
+    db.session.add(ticket)
+    db.session.commit()
 
-            mechanic = Mechanic(
-                name = "Jane Mechanic",
-                username = f"janemech{unique_id}",
-                email = f"jane{unique_id}@test.com",
-                phone = "123456788",
-                address = "456 Mechanic Ave",
-                password = generate_password_hash("mech123"),
-                hours_worked = 0,
-                specialty = "Engine"
-            )
-            db.session.add(mechanic)
-
-            part = Inventory(
-                name = "Test Part",
-                price = 19.99,
-                quantity = 10
-            )
-            db.session.add(part)
-
-            db.session.flush()
-
-            ticket = ServiceTicket(
-                description = "Oil change",
-                status = "open",
-                customer_id = customer.id
-            )
-            ticket.mechanics.append(mechanic)
-            db.session.add(ticket)
-            ticket.parts.append(part)
-            db.session.commit()
-
-            self.customer_id = customer.id
-            self.mechanic_id = mechanic.id
-            self.ticket_id = ticket.id
-            self.part_id = part.id
-            self.customer_token = encode_token(self.customer_id)
-            self.mechanic_token = encode_mechanic_token(self.mechanic_id)
-            self.admin_token = encode_admin_token(1)
+    self.customer_id = customer.id
+    self.mechanic_id = mechanic.id
+    self.ticket_id = ticket.id
+    self.part_id = part.id
+    self.customer_token = encode_token(self.customer_id)
+    self.mechanic_token = encode_mechanic_token(self.mechanic_id)
+    self.admin_token = encode_admin_token(1)
 
     def tearDown(self):
         with self.app.app_context():
