@@ -10,6 +10,10 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from .models import Mechanic, ServiceTicket, Inventory
 from flask_sqlalchemy import SQLAlchemy
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate()
