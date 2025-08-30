@@ -4,6 +4,7 @@ from app.models import Customer, Mechanic
 from werkzeug.security import generate_password_hash
 from app.autho.utils import encode_customer_token, encode_admin_token, encode_mechanic_token
 from sqlalchemy import text
+from tests.test_setup import apply_migrations
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
@@ -11,7 +12,8 @@ class BaseTestCase(unittest.TestCase):
         self.client = self.app.test_client()
 
         with self.app.app_context():
-            db.create_all()
+            apply_migrations()
+            #db.create_all()
 
             print("Tables after create_all():", db.inspect(db.engine).get_table_names())
 
