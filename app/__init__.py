@@ -1,4 +1,4 @@
-from flask import Flask, app, jsonify
+from flask import Flask, jsonify
 from app.extensions import db, ma, limiter
 from app.blueprints.mechanic import mechanic_bp
 from app.blueprints.service_ticket import service_ticket_bp
@@ -7,32 +7,26 @@ from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
 from flask_cors import CORS
-from .models import Mechanic, ServiceTicket, Inventory, Customer
-from flask_sqlalchemy import SQLAlchemy
-import os
+from flask_migrate import Migrate
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-db = SQLAlchemy()
-
-
-def create_app(config_name = None):
+def create_app(config_name=None):
+    config_name = config_name or 'development'
 
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     CORS(app)
 
     db.init_app(app)
-    
-    with app.app_context():
-        from . import models
     ma.init_app(app)
     limiter.init_app(app)
-    
-    from flask_migrate import Migrate
     migrate = Migrate(app, db)
-    migrate.init_app(app, db)
+
+    with app.app_context():
+        from . import models
 
     app.register_blueprint(mechanic_bp, url_prefix='/mechanics')
     app.register_blueprint(service_ticket_bp, url_prefix='/service-tickets')
