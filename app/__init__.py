@@ -18,8 +18,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name = None):
-    from flask_migrate import Migrate
-    
+
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     CORS(app)
@@ -27,6 +26,8 @@ def create_app(config_name = None):
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
+    
+    from flask_migrate import Migrate
     migrate = Migrate(app, db)
     migrate.init_app(app, db)
 
