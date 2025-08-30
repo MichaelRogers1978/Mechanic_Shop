@@ -5,6 +5,11 @@ from werkzeug.security import generate_password_hash
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 from jose import jwt
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+migrate = Migrate()
 
 app = create_app("testing")
 
