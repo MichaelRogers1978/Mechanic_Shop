@@ -24,6 +24,9 @@ def create_app(config_name = None):
     CORS(app)
 
     db.init_app(app)
+    
+    with app.app_context():
+        from . import models
     ma.init_app(app)
     limiter.init_app(app)
     
