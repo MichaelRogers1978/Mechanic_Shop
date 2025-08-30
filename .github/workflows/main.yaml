@@ -28,16 +28,22 @@ jobs:
       - name: List installed packages
         run: pip list
 
-      - name: Run migrations
+      - name: Set environment variables
+        run: echo "Environment variables set"
         env:
           FLASK_APP: "flask_app.py"
           FLASK_ENV: testing
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
-      - name: Debug Flask CLI
-        run: flask --help
-        run: flask db upgrade
 
+      - name: Apply migrations to test DB
+        run: flask db upgrade
+        env:
+          FLASK_APP: "flask_app.py"
+          FLASK_ENV: testing
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
+        
       - name: Run unit tests
         env:
           FLASK_APP: "flask_app.py"
