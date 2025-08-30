@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, app, jsonify
 from app.extensions import db, ma, limiter
 from app.blueprints.mechanic import mechanic_bp
 from app.blueprints.service_ticket import service_ticket_bp
@@ -7,7 +7,7 @@ from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
 from flask_cors import CORS
-from flask_migrate import Migrate
+
 from .models import Mechanic, ServiceTicket, Inventory
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -19,8 +19,9 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app(config_name = None):
+    from flask_migrate import Migrate
+    
     app = Flask(__name__)
-
     app.config.from_object(config[config_name])
     CORS(app)
 
