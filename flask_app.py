@@ -13,3 +13,4 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     config={'app_name': "Mechanic Shop"}
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+

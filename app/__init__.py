@@ -7,7 +7,7 @@ from app.blueprints.inventory import inventory_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from app.config import config
 from flask_cors import CORS
-from .models import Mechanic, ServiceTicket, Inventory
+from .models import Mechanic, ServiceTicket, Inventory, Customer
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
