@@ -30,6 +30,7 @@ jobs:
 
       - name: Run migrations
         env:
+          FLASK_APP: "flask_app.py"
           FLASK_ENV: testing
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
@@ -37,6 +38,7 @@ jobs:
 
       - name: Run unit tests
         env:
+          FLASK_APP: "flask_app.py"
           FLASK_ENV: testing
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
@@ -65,6 +67,7 @@ jobs:
 
       - name: Run migrations
         env:
+          FLASK_APP: "flask_app.py"
           FLASK_ENV: production
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
