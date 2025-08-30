@@ -1,7 +1,9 @@
+import os
 from app import create_app
 from flask_swagger_ui import get_swaggerui_blueprint
 
-app = create_app("testing")
+config_name = os.getenv("FLASK_ENV", "development")
+app = create_app(config_name)
 
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.json'
