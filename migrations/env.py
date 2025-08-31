@@ -1,6 +1,7 @@
 import os
 import sys
 from logging.config import fileConfig
+from os.path import join, dirname
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
@@ -9,7 +10,8 @@ from alembic import context
 config = context.config
 
 # Interpret the config file for Python logging.
-fileConfig(config.config_file_name)
+config_path = join(dirname(__file__), '..', 'alembic.ini')
+fileConfig(config_path)
 
 # Ensure your app is on the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
