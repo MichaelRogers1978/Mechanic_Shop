@@ -2,7 +2,6 @@ import os
 import sys
 from logging.config import fileConfig
 from os.path import join, dirname
-
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
@@ -26,7 +25,11 @@ target_metadata = db.metadata
 # Get the DB URL from your app config or environment
 db_url = os.getenv('DATABASE_URL')
 if not db_url:
-    raise RuntimeError("DATABASE_URL environment variable not set.")
+    raise RuntimeError(
+        """DATABASE_URL environment variable not set.
+        Make sure it's defined in your shell, .env file, or CI secrets."""
+    )
+
 config.set_main_option('sqlalchemy.url', db_url)
 
 def run_migrations_offline():
