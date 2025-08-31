@@ -11,7 +11,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      FLASK_APP: "flask_app:create_app"
+      FLASK_APP: flask_app.py
       FLASK_ENV: testing
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
@@ -40,8 +40,8 @@ jobs:
       - name: Apply migrations
         run: flask db upgrade
 
-      - name: Run tests with coverage
-        run: pytest --cov=app --cov-report=term-missing
+      - name: Run tests
+        run: pytest -m unittest discover
 
       - name: List installed packages
         run: pip list
