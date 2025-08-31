@@ -29,6 +29,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      
+      - name: Stamp DB to head
+        run: flask db stamp head
 
       - name: Apply migrations
         run: flask db upgrade
