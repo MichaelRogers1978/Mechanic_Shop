@@ -1,7 +1,7 @@
 from jose import jwt, JWTError
 from flask import request, jsonify, current_app
 from functools import wraps
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import os
 import traceback
 
@@ -29,7 +29,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 480
 
 def encode_mechanic_token(mechanic_id):
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
+
         expire = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         
         payload = {
@@ -109,7 +110,8 @@ def mechanic_token_required(f):
             
             exp_time = payload.get('exp')
             if isinstance(exp_time, datetime):
-                now = datetime.utcnow()
+                now = datetime.now(timezone.utc)
+
                 if exp_time <= now:
                     print(f"   Token expired: {exp_time} <= {now}")
                     return jsonify({'error': "Token expired"}), 401
@@ -137,7 +139,8 @@ def encode_token(customer_id):
 
 def encode_customer_token(customer_id):
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
+
         expire = now + timedelta(days = 2)
         
         payload = {
@@ -211,7 +214,8 @@ def get_token_info(token):
         exp_time = payload.get('exp')
         
         if isinstance(exp_time, datetime):
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
+
             time_left = exp_time - now
             is_valid = time_left.total_seconds() > 0
         else:
@@ -239,8 +243,9 @@ def encode_admin_token(admin_id):
         payload = {
             'sub': str(admin_id),
             'role': 'admin',
-            'exp': datetime.utcnow() + timedelta(hours = 12),
-            'iat': datetime.utcnow()
+            'exp': datetime.now() + timezone(hours = 12),
+            'iat': datetime.now(timezone.utc)
+
         }
         
         token = jwt.encode(payload, get_secret_key(), algorithm = 'HS256')
