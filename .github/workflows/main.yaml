@@ -14,7 +14,7 @@ jobs:
       FLASK_APP: "flask_app:create_app"
       FLASK_ENV: testing
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      #SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
+      SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
