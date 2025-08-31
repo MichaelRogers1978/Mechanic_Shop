@@ -30,42 +30,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Apply Alembic migrations
-        run: alembic upgrade head
+      - name: Apply migrations
+        run: flask db upgrade
 
-      - name: Run test with coverage
+      - name: Run tests with coverage
         run: pytest --cov=app --cov-report=term-missing
 
       - name: List installed packages
         run: pip list
 
-      - name: Set environment variables
-        run: echo "Environment variables set"
-        env:
-          FLASK_APP: "flask_app.py"
-          FLASK_ENV: testing
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
-
-      - name: Apply migrations to test DB
-        run: flask db upgrade
-        env:
-          FLASK_APP: "flask_app.py"
-          FLASK_ENV: testing
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
-        
-      - name: Run unit tests
-        env:
-          FLASK_APP: "flask_app.py"
-          FLASK_ENV: testing
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
-        run: python -m unittest discover tests
-
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    env:
+      FLASK_APP: flask_app.py
+      FLASK_ENV: production
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
 
     steps:
       - name: Checkout repository
@@ -81,21 +62,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: List installed packages
-        run: pip list
-
-      - name: Run migrations
-        env:
-          FLASK_APP: "flask_app.py"
-          FLASK_ENV: production
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SQLALCHEMY_DATABASE_URI: ${{ secrets.DATABASE_URL }}
-      - name: Debug Flask CLI
-        run: flask --help
+      - name: Apply migrations
         run: flask db upgrade
 
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
-        with: 
+        with:
           service-id: ${{ secrets.SERVICE_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
